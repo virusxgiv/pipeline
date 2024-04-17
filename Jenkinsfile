@@ -8,23 +8,24 @@ pipeline {
     IMAGE_NAME = 'givengoon/todo'
     IMAGE_TAG = 'latest'
     APP_NAME = 'todo'
+    DOCKER_EXEC = '/Applications/Docker.app/Contents/Resources/bin/docker'
   }
   stages {
     stage('Build') {
       steps {
-        sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
+        sh "$DOCKER_EXEC build -t $IMAGE_NAME:$IMAGE_TAG ."
       }
     }
     stage('Login') {
       steps {
-        sh 'echo $HEROKU_API_KEY | docker login --username=_ --password-stdin registry.heroku.com'
+        sh "echo $HEROKU_API_KEY | $DOCKER_EXEC login --username=_ --password-stdin registry.heroku.com"
       }
     }
     stage('Push to Heroku registry') {
       steps {
         sh '''
-          docker tag $IMAGE_NAME:$IMAGE_TAG registry.heroku.com/$APP_NAME/web
-          docker push registry.heroku.com/$APP_NAME/web
+          $DOCKER_EXEC tag $IMAGE_NAME:$IMAGE_TAG registry.heroku.com/$APP_NAME/web
+          $DOCKER_EXEC push registry.heroku.com/$APP_NAME/web
         '''
       }
     }
@@ -38,7 +39,7 @@ pipeline {
   }
   post {
     always {
-      sh 'docker logout'
+      sh '$DOCKER_EXEC logout'
     }
   }
 }
