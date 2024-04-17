@@ -1,7 +1,8 @@
 pipeline {
-    agent any 
+    agent any
     environment {
-    DOCKERHUB_CREDENTIALS = credentials('givengo-dockerhub')
+        DOCKERHUB_CREDENTIALS = credentials('docker-hub-givengo')
+        DOCKER_PATH = '/Applications/Docker.app/Contents/Resources/bin/docker'
     }
     stages { 
         stage('SCM Checkout') {
